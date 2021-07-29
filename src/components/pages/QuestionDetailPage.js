@@ -2,29 +2,33 @@
 import { css } from "@emotion/react";
 import { useState } from "react";
 
-import { useQuestionPollsApi } from "hooks/usePollsApi";
+import {
+  useChoiceSelectPollsApi,
+  useQuestionPollsApi,
+} from "hooks/usePollsApi";
 
 const getId = (str) => str.split("/").reverse()[0];
 const getPercentage = (total, current) => {
-  return Math.floor((current / total) * 100);
+  const safeTotal = total ? total : 1;
+  return Math.floor((current / safeTotal) * 100);
 };
 
 const QuestionDetailPage = (props) => {
   const id = props.match.params.questionID;
   const [question] = useQuestionPollsApi(id);
+  const [data, setVote] = useChoiceSelectPollsApi();
   const [selectedChoice, setSelectedChoice] = useState();
+
   if (question.isLoading) {
     return "Loading...";
   }
-
-  console.log(question);
 
   const choices = question.data.choices || [];
   const toalVotes = (choices || []).reduce((acc, cur) => acc + cur.votes, 0);
 
   const handleSelectChoice = (id) => {
     if (id === selectedChoice) {
-      setSelectedChoice();
+      setSelectedChoice(null);
     }
 
     setSelectedChoice(id);
@@ -54,12 +58,12 @@ const QuestionDetailPage = (props) => {
                   ${id === selectedChoice ? "background: #eee" : ""};
                 `}
               >
-                <td>
+                <td onClick={() => handleSelectChoice(id)}>
                   <input
                     type="checkbox"
-                    defaultChecked={selectedChoice === id}
+                    checked={selectedChoice === id}
                     value={selectedChoice === id}
-                    onClick={() => handleSelectChoice(id)}
+                    onChange={() => handleSelectChoice(id)}
                   ></input>
                 </td>
                 <td>{choice.choice}</td>
@@ -70,7 +74,12 @@ const QuestionDetailPage = (props) => {
           })}
         </tbody>
       </table>
-      <button disabled={selectedChoice === undefined}>Vote!</button>
+      <button
+        disabled={selectedChoice === undefined}
+        onClick={() => setVote(id, selectedChoice)}
+      >
+        Vote!
+      </button>
     </div>
   );
 };

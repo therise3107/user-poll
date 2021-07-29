@@ -7,18 +7,25 @@ import {
 
 import Home from 'components/pages/Home';
 import QuestionDetailPage from 'components/pages/QuestionDetailPage';
+import Layout from 'components/layouts';
 
 const App = ({ props }) => (
   <Router>
     <Route
       exact
       path="/"
-      component={(routerProps) => <Home {...routerProps} {...props} />}
+      component={(routerProps) => (
+        <Layout>
+          <Home {...routerProps} {...props} />
+        </Layout>
+      )}
     ></Route>
     <Route
       path="/questions/:questionID"
       component={(routerProps) => (
-        <QuestionDetailPage {...routerProps} {...props} />
+        <Layout>
+          <QuestionDetailPage {...routerProps} {...props} />
+        </Layout>
       )}
     ></Route>
   </Router>

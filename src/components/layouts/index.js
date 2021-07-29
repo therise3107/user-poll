@@ -1,12 +1,18 @@
-import Container from "component/container";
+import Container from "components/Container";
+import { Link } from "react-router-dom";
 
 const Layout = ({ children, ...rest }) => (
   <>
     <header>
-      <main>
-        <Container>{children}</Container>
-      </main>
+      <Container>
+        <Link to="/">
+          <h1>Questions</h1>
+        </Link>
+      </Container>
     </header>
+    <main>
+      <Container>{children}</Container>
+    </main>
   </>
 );
 
